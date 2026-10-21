@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Build and audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dev dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build the single-file game
+        run: npm run build
+
+      - name: Run the core harness
+        run: node tests/harness-core.js
+
+      - name: Run the full audit
+        run: node tests/harness-audit.js
+
+      - name: Minify and verify the minified bundle
+        run: |
+          npm run minify
+          GAME_JS=build/game.hook.min.js node tests/harness-core.js
+          GAME_JS=build/game.hook.min.js node tests/harness-audit.js
+
+      - name: Check balance has not regressed
+        run: node tests/speed-probe.js
+
+      - name: Upload the built game
+        uses: actions/upload-artifact@v4
+        with:
+          name: neon-runner-dist
+          path: |
+            build/neon-runner.min.html
+            build/neon-runner.html
+          if-no-files-found: error
