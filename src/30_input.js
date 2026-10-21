@@ -52,6 +52,44 @@ var PrevRep  = { left:0,right:0,up:0,down:0,action:0 };
 var KeyState = {};
 var Rebinding = null;
 
+/* Any key at all, bound or not — the boot screen uses this so that pressing
+   a letter that is not bound still starts the game, and the diagnostic line
+   can tell the difference between "no keyboard" and "wrong key". */
+var AnyKeyFlag = 0;      /* edge-triggered, consumed once per simulation step */
+var AnyKeyEver = 0;      /* sticky, for the "is a keyboard attached" hint */
+var LastKeyCode = '';
+
+/* Canonical key code. e.code is layout-independent and preferred, but we fall
+   back to e.key and finally e.keyCode so unusual browsers and exotic layouts
+   still register instead of silently doing nothing. */
+function keyCodeOf(e){
+  if (e.code) return e.code;
+  var k = e.key;
+  if (!k) return 'KeyCode' + (e.keyCode || 0);
+  if (k === ' ') return 'Space';
+  if (k === 'Esc') return 'Escape';
+  if (k.indexOf('Arrow') === 0) return k;
+  if (k.length === 1){
+    var c = k.toUpperCase();
+    if (c >= 'A' && c <= 'Z') return 'Key' + c;
+    if (c >= '0' && c <= '9') return 'Digit' + c;
+    return 'Char:' + c;
+  }
+  return k;
+}
+/* human-readable label for a stored code */
+function keyLabel(code){
+  if (!code) return '—';
+  if (code.indexOf('Key') === 0 && code.length === 4) return code.slice(3);
+  if (code.indexOf('Digit') === 0) return code.slice(5);
+  if (code.indexOf('Char:') === 0) return code.slice(5);
+  var map = { ArrowLeft:'\u2190 LEFT', ArrowRight:'\u2192 RIGHT', ArrowUp:'\u2191 UP',
+              ArrowDown:'\u2193 DOWN', Space:'SPACE', Enter:'ENTER', Escape:'ESC',
+              Backspace:'BACKSPACE', Tab:'TAB', ShiftLeft:'L SHIFT', ShiftRight:'R SHIFT',
+              ControlLeft:'L CTRL', ControlRight:'R CTRL', AltLeft:'L ALT', AltRight:'R ALT' };
+  return map[code] || code.toUpperCase();
+}
+
 function keyDown(code){
   KeyState[code] = 1;
   if (Rebinding){ return Rebinding(code); }
@@ -69,14 +107,28 @@ function releaseAllKeys(){
   KeyState = {};
 }
 
-window.addEventListener('keydown', function(e){
-  if (e.repeat){ e.preventDefault(); return; }
-  if (keyDown(e.code)) e.preventDefault();
-}, { passive:false });
-window.addEventListener('keyup', function(e){
-  keyUp(e.code);
-  e.preventDefault();
-}, { passive:false });
+function onKeyDown(e){
+  /* never swallow a browser shortcut — Ctrl+R, Cmd+Q etc. must still work */
+  if (e.ctrlKey || e.altKey || e.metaKey) return;
+  /* a keypress is a valid user gesture, so it can unlock audio just like a tap */
+  audioUnlock();
+  var code = keyCodeOf(e);
+  LastKeyCode = code;
+  AnyKeyFlag = 1;
+  AnyKeyEver = 1;
+  if (e.repeat){
+    if (actionForKey(code)) e.preventDefault();
+    return;
+  }
+  if (keyDown(code)) e.preventDefault();
+}
+function onKeyUp(e){
+  var code = keyCodeOf(e);
+  if (actionForKey(code)) e.preventDefault();
+  keyUp(code);
+}
+window.addEventListener('keydown', onKeyDown, { passive:false });
+window.addEventListener('keyup', onKeyUp, { passive:false });
 window.addEventListener('blur', function(){ releaseAllKeys(); releaseTouch(); });
 
 /* ---------- gamepad ---------- */
