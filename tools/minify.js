@@ -1,25 +1,16 @@
 #!/usr/bin/env node
-/* Minifies the built game into a single deployable file.
-
-   Produces:
-     build/neon-runner.min.html  the minified game
-     build/game.min.js           the minified script on its own
-     build/game.hook.min.js      minified + an instrumentation hook, so the
-                                 audit harness can verify the *minified*
-                                 bundle rather than only the readable source
-     index.html                  the same minified file at the repo root,
-                                 which is what GitHub Pages serves
-*/
+/* Produces the minified single-file build plus a "hooked" copy of the
+   minified JS so the audit harness can verify the *minified* logic, not
+   just the readable source. */
 const fs = require('fs');
 const path = require('path');
-const zlib = require('zlib');
 const { minify } = require('terser');
 
-const ROOT = path.resolve(__dirname, '..');
-const BUILD = path.join(ROOT, 'build');
+const ROOT = '/scratch/work';
+const SRC = path.join(ROOT, 'src');
 
-/* Exposed to the harnesses. Injected before minification, so terser renames
-   these references consistently with the rest of the bundle. */
+/* the same instrumentation hook the audit harnesses inject, so we can prove
+   the minified bundle behaves identically */
 const HOOK = `
 global.__G = {
   get S(){return S}, get P(){return P}, get enemies(){return enemies},
@@ -29,6 +20,11 @@ global.__G = {
   get Cam(){return Cam}, get Wall(){return Wall}, get decals(){return decals},
   get JUMP_APEX(){return JUMP_APEX}, get P_H(){return P_H}, get P_DUCK_H(){return P_DUCK_H},
   get UserIn(){return UserIn}, get Music(){return Music}, get Input(){return Input},
+  get Audio(){return Audio}, get Keys(){return Keys}, get ACTIONS(){return ACTIONS},
+  get DefaultKeys(){return DefaultKeys}, get AnyKeyEver(){return AnyKeyEver},
+  get AnyKeyFlag(){return AnyKeyFlag}, get LastKeyCode(){return LastKeyCode},
+  keyLabel:keyLabel, audioUnlock:audioUnlock, audioBlocked:audioBlocked, audioState:audioState,
+  actionForKey:actionForKey, saveKeys:saveKeys,
   CARDS:CARDS, WEAPONS:WEAPONS, WEAPON_KEYS:WEAPON_KEYS, ENEMY_DEF:ENEMY_DEF, HAZARDS:HAZARDS,
   PILOTS:PILOTS, MODIFIERS:MODIFIERS, ACHIEVEMENTS:ACHIEVEMENTS, BOSSES:BOSSES, BOSS_ORDER:BOSS_ORDER,
   STAGES:STAGES, RARITY:RARITY,
@@ -43,8 +39,13 @@ global.__G = {
 global.__T = global.__G;
 `;
 
-/* Conservative CSS minifier — deliberately never touches arithmetic inside
-   calc()/env(), which a naive whitespace pass would corrupt. */
+function injectHook(js){
+  const i = js.indexOf('/*NEON_HOOK*/');
+  if (i < 0) throw new Error('NEON_HOOK marker missing from the source');
+  return js.slice(0, i) + HOOK + js.slice(i);
+}
+
+/* conservative CSS minifier: never touches calc()/env() arithmetic */
 function minifyCss(css){
   return css
     .replace(/\/\*[\s\S]*?\*\//g, '')
@@ -55,39 +56,51 @@ function minifyCss(css){
 }
 
 (async () => {
-  const html = fs.readFileSync(path.join(BUILD, 'neon-runner.html'), 'utf8');
-  const open = html.indexOf('<script>');
-  const close = html.indexOf('</script>');
-  const head = html.slice(0, open);
-  const tail = html.slice(close);
-  const js = html.slice(open + '<script>'.length, close);
+  const order = ['00_head.html','10_core.js','20_audio.js','25_sprites.js','26_icons.js',
+                 '30_input.js','35_content.js','40_render.js','45_fx.js','50_world.js',
+                 '60_entities.js','70_systems.js','80_ui.js','85_screens.js','90_loop.js','99_tail.html'];
+  let html = '';
+  for (const f of order) html += fs.readFileSync(path.join(SRC, f), 'utf8');
+
+  const head = html.slice(0, html.indexOf('<script>'));
+  const tail = html.slice(html.indexOf('</script>'));
+  const js = html.slice(html.indexOf('<script>') + '<script>'.length, html.indexOf('</script>'));
 
   const opts = {
     compress: { passes: 2, drop_debugger: true, pure_getters: false,
                 unsafe: false, unsafe_arrows: false, keep_fargs: true },
     mangle: true,
-    format: { comments: false, ascii_only: true }
+    format: { comments: /NEON_HOOK/, ascii_only: true }
   };
 
-  const minJs = (await minify(js, opts)).code;
-  const hooked = (await minify(js.replace('/*NEON_HOOK*/', HOOK), opts)).code;
+  const out = await minify(js, opts);
+  if (out.error) throw out.error;
+  const minJs = out.code;
 
+  const hooked = await minify(injectHook(js), opts);
+  if (hooked.error) throw hooked.error;
+
+  /* rebuild the html: minified css + minified js, plus a build stamp */
   const stamp = new Date().toISOString().slice(0, 19).replace('T', ' ') + ' UTC';
-  let minHead = head.replace(/<style>[\s\S]*?<\/style>/,
-    m => '<style>' + minifyCss(m.slice(7, -8)) + '</style>');
+  let minHead = head.replace(/<style>[\s\S]*?<\/style>/, m => {
+    const inner = m.slice(7, -8);
+    return '<style>' + minifyCss(inner) + '</style>';
+  });
   minHead = minHead.replace('</head>',
-    '<!-- NEON RUNNER \u00b7 minified build \u00b7 ' + stamp + ' -->\n</head>');
+    '<!-- NEON RUNNER \u2014 minified build, generated ' + stamp + ' -->\n</head>');
   const minHtml = minHead + '<script>' + minJs + tail;
 
-  fs.writeFileSync(path.join(BUILD, 'game.min.js'), minJs);
-  fs.writeFileSync(path.join(BUILD, 'game.hook.min.js'), hooked);
-  fs.writeFileSync(path.join(BUILD, 'neon-runner.min.html'), minHtml);
-  fs.writeFileSync(path.join(ROOT, 'index.html'), minHtml);
+  fs.writeFileSync(path.join(ROOT, 'game.min.js'), minJs);
+  fs.writeFileSync(path.join(ROOT, 'game.hook.min.js'), hooked.code);
+  fs.writeFileSync(path.join(ROOT, 'neon-runner.min.html'), minHtml);
 
-  const gz = zlib.gzipSync(minHtml, { level: 9 }).length;
-  const kb = n => (n / 1024).toFixed(1) + ' KB';
-  console.log('readable  ' + kb(html.length) + '   (' + kb(js.length) + ' of JS)');
-  console.log('minified  ' + kb(minHtml.length) + '   (' + kb(minJs.length) + ' of JS)');
-  console.log('gzipped   ' + kb(gz));
-  console.log('saved     ' + (100 - Math.round(minHtml.length / html.length * 100)) + '%');
+  const rawHtml = fs.statSync(path.join(ROOT, 'neon-runner.html')).size;
+  const minSize = Buffer.byteLength(minHtml);
+  console.log('raw   html : ' + rawHtml.toLocaleString() + ' bytes');
+  console.log('min   html : ' + minSize.toLocaleString() + ' bytes  (' +
+              (100 - Math.round(minSize / rawHtml * 100)) + '% smaller)');
+  console.log('raw    js  : ' + Buffer.byteLength(js).toLocaleString() + ' bytes');
+  console.log('min    js  : ' + Buffer.byteLength(minJs).toLocaleString() + ' bytes  (' +
+              (100 - Math.round(Buffer.byteLength(minJs) / Buffer.byteLength(js) * 100)) + '% smaller)');
+  console.log('gzip  html : ' + require('zlib').gzipSync(minHtml, {level:9}).length.toLocaleString() + ' bytes');
 })();
