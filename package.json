@@ -1,6 +1,23 @@
 {
   "name": "neon-runner",
   "version": "3.0.0",
+  "description": "A retro auto-fire side-scrolling shooter. Move, jump, duck \u2014 your gun fires itself. One self-contained HTML file, zero dependencies, fully offline.",
   "private": true,
-  "license": "MIT"
+  "license": "MIT",
+  "type": "commonjs",
+  "scripts": {
+    "build": "node tools/build.js",
+    "minify": "node tools/minify.js",
+    "dist": "node tools/build.js && node tools/minify.js",
+    "test": "node tools/build.js && node tests/harness-core.js && node tests/harness-audit.js",
+    "audit:minified": "GAME_JS=build/game.hook.min.js node tests/harness-core.js && GAME_JS=build/game.hook.min.js node tests/harness-audit.js",
+    "balance": "node tests/balance-probe.js",
+    "speeds": "node tests/speed-probe.js"
+  },
+  "devDependencies": {
+    "terser": "^5.31.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }
