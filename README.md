@@ -11,7 +11,6 @@
 
 ### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY NOW</b></a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/neon-runner/">Landing page</a>
 
-<sub>**Landing page:** <https://drsamonline.github.io/neon-runner/> &nbsp;|&nbsp; **Play the game:** <https://drsamonline.github.io/neon-runner/play/></sub>
 
 </div>
 
@@ -28,7 +27,6 @@ Move, jump, duck. That is the entire control scheme.
 
 ### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY IT NOW</b></a>
 
-<sub>**<https://drsamonline.github.io/neon-runner/play/>**</sub>
 
 [![Play now](https://img.shields.io/static/v1?label=NEON%20RUNNER&message=%E2%96%B6%20PLAY%20NOW&color=5df0a8&labelColor=0b1030&style=for-the-badge)](https://drsamonline.github.io/neon-runner/play/)
 [![Live demo](https://img.shields.io/website?url=https%3A%2F%2Fdrsamonline.github.io%2Fneon-runner%2Fplay%2F&label=live%20demo&up_message=online&down_message=offline&up_color=5df0a8&labelColor=0b1030&style=for-the-badge)](https://drsamonline.github.io/neon-runner/play/)
@@ -66,7 +64,7 @@ Move, jump, duck. That is the entire control scheme.
 
 ### 🌐 Play online
 
-**[drsamonline.github.io/neon-runner](https://drsamonline.github.io/neon-runner/play/)**
+**[drsamonline.github.io/neon-runner/play/](https://drsamonline.github.io/neon-runner/play/)**
 
 Nothing to install. Opens in any modern browser — desktop or phone. Once loaded it runs entirely offline.
 
@@ -94,7 +92,6 @@ Works identically from `file://` and from a web server. Works offline. Works on 
 
 | | |
 | :-- | :-- |
-| **Live** | [drsamonline.github.io/neon-runner](https://drsamonline.github.io/neon-runner/play/) |
 | **Source** | [github.com/drsamonline/neon-runner](https://github.com/drsamonline/neon-runner) |
 | **Download** | [index.html](https://github.com/drsamonline/neon-runner/raw/main/index.html) (176 KB, self-contained) |
 | **Build status** | [![CI](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml/badge.svg)](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml) |
