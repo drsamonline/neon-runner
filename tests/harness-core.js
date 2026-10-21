@@ -81,7 +81,7 @@ class FakeAudioContext {
 }
 global.window.AudioContext = FakeAudioContext;
 
-let code = fs.readFileSync(process.env.GAME_JS || '/scratch/work/game.js', 'utf8');
+let code = fs.readFileSync(process.env.GAME_JS || require('path').join(__dirname, '..', 'build', 'game.js'), 'utf8');
 const hook = `
 global.__T = {
   get S(){return S}, get P(){return P}, get enemies(){return enemies},
