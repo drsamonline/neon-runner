@@ -203,7 +203,8 @@ global.__G = {
   get Codex(){return CodexState}, get Ach(){return AchState}, get Hist(){return HistState},
   get Loadout(){return LoadoutState}, get Meta(){return Meta},
   get Cam(){return Cam}, get GROUND_Y(){return GROUND_Y}, get pickups(){return pickups}, get hazards(){return hazards},
-  spawnBoss:spawnBoss, finishRun:finishRun
+  spawnBoss:spawnBoss, finishRun:finishRun,
+  get Audio(){return Audio}, get Keys(){return Keys}, audioBlocked:audioBlocked, audioState:audioState
 };
 `;
 const i = code.lastIndexOf('})();');
@@ -291,6 +292,14 @@ if (target === 'card'){
   }
   G.Meta.history[1].replay = 'AAAA';
   G.S.screen = 'history'; G.Hist.index = 0; G.Hist.scroll = 0; steps(2);
+} else if (target === 'boot'){
+  G.S.screen = 'boot'; G.S.bootT = 1; G.S.attract = false; steps(4);
+} else if (target === 'bootready'){
+  G.S.screen = 'boot'; G.S.bootT = 8; G.S.attract = false; steps(4);
+} else if (target === 'controls'){
+  G.S.screen = 'play'; G.S.attract = true; steps(4);
+  G.UI.helpMode = 'bind'; G.UI.settingsFrom = 'attract';
+  G.S.screen = 'help'; G.UI.index = 0; steps(4);
 } else if (target === 'campaign'){
   G.beginRun({ mode:'campaign', stage:2, pilot:'havoc' });
   G.P.maxHp=5;G.P.hp=4;
