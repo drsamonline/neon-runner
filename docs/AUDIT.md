@@ -139,6 +139,14 @@ bytes exactly.
 **Every accessibility toggle** is run in both states, plus three palettes, four
 text scales and three quality levels.
 
+**Keyboard and audio.** Every default binding must resolve to its action;
+arrow keys, `W`/`A`/`S`/`D`, `Space` and the `e.key` fallback must all move the
+player; an unbound key must still start the game; `Ctrl`-combinations must not
+be swallowed; rebinding must change the binding, drive the player, and persist.
+The harness installs a fake `AudioContext`, so it can assert that a keypress
+actually unlocks audio — which is exactly the bug that shipped silently in
+3.0.0 and made the game mute for keyboard players.
+
 **Soak across all modes × all pilots** — 18,000 frames.
 
 **Platform reachability** again, on the current balance numbers.
@@ -156,7 +164,9 @@ Being explicit about this matters more than the green ticks.
   tool, not a playtest.
 - **They cannot see.** The stubbed canvas swallows every draw call. A screen
   could render entirely off-screen and every assertion would still pass.
-- **They cannot catch audio problems** — the audio layer is inert in Node.
+- **They cannot hear anything.** The harness installs a fake `AudioContext`, so
+  it can verify that audio is *unlocked and wired up* on the right gestures,
+  but it cannot tell you whether a sound is audible, well mixed, or pleasant.
 - **They do not test real browser APIs.** `localStorage` quotas, `AudioContext`
   autoplay policy, `requestFullscreen`, haptics and PWA install all behave
   differently in a real browser.
