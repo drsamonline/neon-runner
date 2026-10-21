@@ -1,6 +1,6 @@
 {
   "name": "neon-runner",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A retro auto-fire side-scrolling shooter. Move, jump, duck \u2014 your gun fires itself. One self-contained HTML file, zero dependencies, fully offline.",
   "private": true,
   "license": "MIT",
