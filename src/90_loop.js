@@ -100,6 +100,10 @@ function fixedStep(dt){
   pollInput();
   replayStep();
 
+  /* any key at all, bound or not — consumed here so exactly one step sees it */
+  var anyKeyNow = AnyKeyFlag;
+  AnyKeyFlag = 0;
+
   /* global pause toggle */
   if (Input.pause && !prevPause){
     if (S.screen === SC.PLAY && !S.attract){ S.screen = SC.PAUSE; UI.index = 0; sfx('menu'); }
@@ -122,7 +126,8 @@ function fixedStep(dt){
   processTaps();
 
   if (S.screen === SC.BOOT){
-    if (UserIn.anyPressed) bootToTitle();
+    S.bootT = (S.bootT || 0) + dt;
+    if (UserIn.anyPressed || anyKeyNow) bootToTitle();
     return;
   }
 
@@ -204,14 +209,49 @@ function drawBoot(){
   ctx.textAlign = 'center';
   setFont(52 * u, 'bold');
   ctx.fillStyle = 'rgba(255,60,140,' + (0.3 + pulse * 0.3) + ')';
-  ctx.fillText('NEON RUNNER', VW / 2 + 4, VH * 0.44 + 4);
+  ctx.fillText('NEON RUNNER', VW / 2 + 4, VH * 0.34 + 4);
   ctx.fillStyle = PAL().playerHi;
-  ctx.fillText('NEON RUNNER', VW / 2, VH * 0.44);
+  ctx.fillText('NEON RUNNER', VW / 2, VH * 0.34);
   ctx.textAlign = 'left';
-  txt('AUTO-FIRE SIDE-SHOOTER', VW / 2, VH * 0.44 + 30 * u, 'rgba(180,220,255,0.7)', 14 * u, 'center');
-  txt(isMobile() ? 'TAP TO START' : 'PRESS ANY KEY OR CLICK TO START', VW / 2, VH * 0.62,
+  txt('AUTO-FIRE SIDE-SHOOTER', VW / 2, VH * 0.34 + 30 * u, 'rgba(180,220,255,0.7)', 14 * u, 'center');
+
+  txt('PRESS ANY KEY  \u00B7  CLICK  \u00B7  TAP', VW / 2, VH * 0.54,
       'rgba(120,255,235,' + (0.45 + pulse * 0.55) + ')', 20 * u, 'center');
-  txt('best on desktop \u00B7 fully playable on phone', VW / 2, VH * 0.72, 'rgba(150,190,225,0.5)', 12 * u, 'center');
+
+  /* live bindings, read straight from the saved Keys map so rebinding shows */
+  var pairs = [
+    [keyLabel(Keys.left[0]) + '   ' + keyLabel(Keys.right[0]), 'MOVE'],
+    [keyLabel(Keys.up[0]) + '  /  ' + keyLabel(Keys.action[0]), 'JUMP'],
+    [keyLabel(Keys.down[0]), 'DUCK \u00B7 HOLD WHILE RUNNING TO SLIDE'],
+    [keyLabel(Keys.pause[0]), 'PAUSE'],
+    [keyLabel(Keys.back[0]), 'BACK']
+  ];
+  var bw = Math.min(VW * 0.86, 580 * u);
+  var bx = (VW - bw) / 2;
+  var by = VH * 0.62;
+  var bh = (pairs.length * 22 + 16) * u;
+  ctx.strokeStyle = 'rgba(90,220,255,0.28)'; ctx.lineWidth = 1;
+  ctx.strokeRect(bx + 0.5, by - 14 * u, bw - 1, bh);
+  for (var i = 0; i < pairs.length; i++){
+    var yy = by + i * 22 * u;
+    txt(pairs[i][0], bx + 18 * u, yy, PAL().gold, 13 * u, 'left');
+    txt(pairs[i][1], bx + bw - 18 * u, yy, 'rgba(175,210,240,0.8)', 12 * u, 'right');
+  }
+
+  /* be explicit about the browser audio rule instead of silently being mute */
+  if (audioBlocked()){
+    txt('SOUND IS WAITING FOR A CLICK OR KEYPRESS \u2014 THAT IS A BROWSER RULE',
+        VW / 2, VH * 0.87, 'rgba(255,200,120,' + (0.6 + pulse * 0.4) + ')', 13 * u, 'center');
+  } else {
+    txt('audio ' + audioState() + '  \u00B7  best on desktop  \u00B7  fully playable on phone',
+        VW / 2, VH * 0.87, 'rgba(150,190,225,0.45)', 11 * u, 'center');
+  }
+
+  /* if a keyboard genuinely is not reaching us, say so rather than look dead */
+  if (!AnyKeyEver && S.bootT > 5){
+    txt('no keyboard input detected \u2014 click the page once, then press a key',
+        VW / 2, VH * 0.94, 'rgba(255,140,140,0.85)', 12 * u, 'center');
+  }
 }
 
 
@@ -368,12 +408,20 @@ function boot(){
     releaseAllKeys(); releaseTouch();
   });
 
+  /* nudge focus onto the page so the very first keypress lands here rather
+     than in the browser chrome */
+  try { window.focus(); } catch(e){}
+  try { if (canvas && canvas.focus) { canvas.setAttribute('tabindex','0'); canvas.focus(); } } catch(e){}
+
   requestAnimationFrame(frame);
 }
 
 /* pointer wiring (canvas may not exist before initCanvas, so bind lazily) */
 function wirePointer(){
-  canvas.addEventListener('pointerdown', pointerDown, { passive:false });
+  canvas.addEventListener('pointerdown', function(e){
+    try { window.focus(); if (canvas.focus) canvas.focus(); } catch(err){}
+    pointerDown(e);
+  }, { passive:false });
   canvas.addEventListener('contextmenu', function(e){ e.preventDefault(); });
   canvas.addEventListener('touchstart', function(e){ if (e.cancelable) e.preventDefault(); }, { passive:false });
   canvas.addEventListener('gesturestart', function(e){ e.preventDefault(); });
