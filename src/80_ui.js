@@ -644,7 +644,11 @@ function menuBack(){
     if (UI.settingsFrom === SC.PAUSE){ S.screen = SC.PAUSE; }
     else { S.screen = SC.PLAY; S.attract = true; }
   }
-  else if (s === SC.HELP && UI.helpMode === 'bind'){ S.screen = SC.SETTINGS; UI.helpMode = 'help'; }
+  else if (s === SC.HELP && UI.helpMode === 'bind'){
+    if (UI.settingsFrom === SC.PAUSE){ S.screen = SC.PAUSE; }
+    else { S.screen = SC.PLAY; S.attract = true; }
+    UI.helpMode = 'help';
+  }
   else if (s === SC.LOADOUT){ S.screen = SC.PLAY; S.attract = true; }
   else if (s === SC.CODEX || s === SC.ACH || s === SC.STATS || s === SC.HISTORY ||
            s === SC.SCORES || s === SC.HELP || s === SC.META){ S.screen = SC.PLAY; S.attract = true; }
@@ -845,6 +849,7 @@ function T(s){
 function buildPauseMenu(){
   return [
     { label:'RESUME', icon:'flag', type:'action', action:function(){ S.screen = SC.PLAY; } },
+    { label:'CONTROLS', icon:'gear', type:'action', action:function(){ UI.settingsFrom = SC.PAUSE; S.screen = SC.HELP; UI.helpMode = 'bind'; UI.index = 0; } },
     { label:'SETTINGS', icon:'gear', type:'action', action:function(){ UI.settingsFrom = SC.PAUSE; S.screen = SC.SETTINGS; UI.index = 0; } },
     { label:'CODEX', icon:'book', type:'action', action:function(){ S.screen = SC.CODEX; CodexState.index = 0; CodexState.scroll = 0; } },
     { label:'CAREER STATS', icon:'chart', type:'action', action:function(){ S.screen = SC.STATS; } },
@@ -975,7 +980,9 @@ function buildTitleMenu(){
       action:function(){ beginRun({ seed: weekSeed(), pilot: S.loadoutPilot || 'vector', mods:['swarm'] }); toast('WEEKLY SEED ' + weekSeed().toString(16)); } },
     { label:'LOADOUT', desc:'pick a pilot and stack run modifiers', icon:'grid', type:'action',
       action:function(){ S.screen = SC.LOADOUT; UI.returnTo = 'title'; } },
-    { label:'HOW TO PLAY', desc:'controls, mechanics, and the duck rule', icon:'book', type:'action',
+    { label:'CONTROLS', desc:'see and rebind every key', icon:'gear', type:'action',
+      action:function(){ S.screen = SC.HELP; UI.helpMode = 'bind'; UI.index = 0; UI.settingsFrom = 'attract'; } },
+    { label:'HOW TO PLAY', desc:'mechanics, the duck rule, and how scoring works', icon:'book', type:'action',
       action:function(){ S.screen = SC.HELP; UI.helpMode = 'help'; UI.index = 0; } },
     { label:'CODEX', desc:'every enemy, hazard, weapon and card you have found', icon:'book', type:'action',
       action:function(){ S.screen = SC.CODEX; CodexState.index = 0; CodexState.scroll = 0; } },
@@ -1053,10 +1060,10 @@ function drawHelp(){
   panel(px, py, pw, ph);
   txt('HOW TO PLAY', VW / 2, py + 40 * u, PAL().playerHi, 28 * u, 'center');
   var lines = [
-    ['\u2190  \u2192', 'RUN LEFT / RIGHT'],
-    ['\u2191  /  SPACE', 'JUMP'],
-    ['\u2193', 'DUCK \u2014 enemy lasers pass over you'],
-    ['hold \u2193 while running', 'SLIDE \u2014 brief invulnerability'],
+    [keyLabel(Keys.left[0]) + '  ' + keyLabel(Keys.right[0]), 'RUN LEFT / RIGHT'],
+    [keyLabel(Keys.up[0]) + '  /  ' + keyLabel(Keys.action[0]), 'JUMP'],
+    [keyLabel(Keys.down[0]), 'DUCK \u2014 enemy lasers pass over you'],
+    ['hold ' + keyLabel(Keys.down[0]) + ' while running', 'SLIDE \u2014 brief invulnerability'],
     ['land on an enemy', 'STOMP \u2014 kills it, bounces you up'],
     ['(no fire button)', 'YOUR GUN FIRES ITSELF AT ANY TARGET IN RANGE'],
     ['', ''],
@@ -1080,23 +1087,32 @@ function drawHelp(){
   ctx.fillRect(UI.rects[0].x, UI.rects[0].y, UI.rects[0].w, UI.rects[0].h);
   txt('BACK', VW / 2, py + ph - 32 * u, sel ? '#fff' : 'rgba(200,225,250,0.85)', 17 * u, 'center');
 }
+var ACTION_LABEL = {
+  left:'RUN LEFT', right:'RUN RIGHT', up:'JUMP', down:'DUCK / SLIDE',
+  action:'JUMP / CONFIRM', pause:'PAUSE', back:'BACK / CANCEL'
+};
 function buildBindItems(){
   var items = ACTIONS.map(function(a){
-    return { label: a.toUpperCase(), type:'action', value:(Keys[a] || []).join('  '),
+    var keys = (Keys[a] || []).map(keyLabel).join('   ');
+    return { label: (ACTION_LABEL[a] || a.toUpperCase()), type:'action', value: keys,
+      icon: (a === 'left' || a === 'right') ? 'speed' : (a === 'up' ? 'jump' :
+            (a === 'down' ? 'shield' : (a === 'pause' ? 'clock' : 'back'))),
       action:function(){ startRebind(a); } };
   });
-  items.push({ label:'RESET TO DEFAULTS', type:'action', action:function(){
+  items.push({ label:'RESET TO DEFAULTS', type:'action', icon:'regen', action:function(){
     for (var i = 0; i < ACTIONS.length; i++) Keys[ACTIONS[i]] = DefaultKeys[ACTIONS[i]].slice();
-    saveKeys(); UI.msg = 'controls reset'; UI.msgT = 1.5;
+    saveKeys(); sfx('confirm'); UI.msg = 'controls reset to defaults'; UI.msgT = 1.8;
   } });
-  items.push({ label:'BACK', type:'back' });
+  items.push({ label:'BACK', type:'back', icon:'back' });
   return items;
 }
 function drawBindScreen(){
   var items = buildBindItems();
-  renderMenu('REBIND CONTROLS',
-             UI.listening ? ('PRESS A KEY FOR ' + UI.listenLabel) : 'select an action, then press the key',
-             items, { footer:'BACK returns to settings' });
+  renderMenu('CONTROLS',
+             UI.listening
+               ? ('PRESS THE NEW KEY FOR "' + (ACTION_LABEL[UI.listening] || UI.listening) + '"  \u00B7  ESC TO CANCEL')
+               : 'select an action and press a key to rebind it',
+             items, { footer:'\u2191\u2193 SELECT  \u00B7  ENTER REBIND  \u00B7  ESC BACK' });
 }
 function startRebind(action){
   UI.listenLabel = action.toUpperCase();
