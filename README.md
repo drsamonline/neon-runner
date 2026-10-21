@@ -6,9 +6,25 @@
 
 Move, jump, duck. That is the entire control scheme.
 
+<br>
+
+### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/"><b>PLAY IT NOW</b></a>
+
+<sub>**<https://drsamonline.github.io/neon-runner/>**</sub>
+
+[![Play now](https://img.shields.io/static/v1?label=NEON%20RUNNER&message=%E2%96%B6%20PLAY%20NOW&color=5df0a8&labelColor=0b1030&style=for-the-badge)](https://drsamonline.github.io/neon-runner/)
+[![Live demo](https://img.shields.io/website?url=https%3A%2F%2Fdrsamonline.github.io%2Fneon-runner%2F&label=live%20demo&up_message=online&down_message=offline&up_color=5df0a8&labelColor=0b1030&style=for-the-badge)](https://drsamonline.github.io/neon-runner/)
+
+<sub>Runs in the browser · nothing to install · works offline once loaded</sub>
+
+<br>
+
 [![CI](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml/badge.svg)](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml)
+[![Hosted on GitHub Pages](https://img.shields.io/badge/hosted%20on-GitHub%20Pages-222222?logo=githubpages&logoColor=white)](https://drsamonline.github.io/neon-runner/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3ad4ff.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-3.0.1-ff5b8a.svg)](#-changelog)
+[![Last commit](https://img.shields.io/github/last-commit/drsamonline/neon-runner?color=9b5cff)](https://github.com/drsamonline/neon-runner/commits/main)
+
 [![Dependencies](https://img.shields.io/badge/dependencies-0-5df0a8.svg)](#-zero-dependencies)
 [![Offline](https://img.shields.io/badge/network%20calls-none-5df0a8.svg)](#-zero-dependencies)
 [![Single file](https://img.shields.io/badge/build-single%20HTML%20file-ffd257.svg)](#-quick-start)
@@ -24,19 +40,46 @@ Move, jump, duck. That is the entire control scheme.
 
 ---
 
-## Play it
+## ▶ Play it
 
-**No install. No build. No server. One file.**
+<table>
+<tr>
+<td width="50%" valign="top">
 
-Open `index.html` in any modern browser — double-click it, or drag it into a tab. That is the whole setup.
+### 🌐 Play online
 
-```
+**[drsamonline.github.io/neon-runner](https://drsamonline.github.io/neon-runner/)**
+
+Nothing to install. Opens in any modern browser — desktop or phone. Once loaded it runs entirely offline.
+
+</td>
+<td width="50%" valign="top">
+
+### 💾 Run it locally
+
+**[Download `index.html`](https://github.com/drsamonline/neon-runner/raw/main/index.html)** — or clone the repo:
+
+```bash
 git clone https://github.com/drsamonline/neon-runner.git
 cd neon-runner
-open index.html          # macOS   (xdg-open on Linux, start on Windows)
+open index.html    # macOS
+                   # xdg-open on Linux, start on Windows
 ```
 
+</td>
+</tr>
+</table>
+
+**No install. No build. No server. One file.** Open `index.html` in any modern browser — double-click it, or drag it into a tab. That is the whole setup.
+
 Works identically from `file://` and from a web server. Works offline. Works on a phone.
+
+| | |
+| :-- | :-- |
+| **Live** | [drsamonline.github.io/neon-runner](https://drsamonline.github.io/neon-runner/) |
+| **Source** | [github.com/drsamonline/neon-runner](https://github.com/drsamonline/neon-runner) |
+| **Download** | [index.html](https://github.com/drsamonline/neon-runner/raw/main/index.html) (176 KB, self-contained) |
+| **Build status** | [![CI](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml/badge.svg)](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml) |
 
 ---
 
@@ -73,6 +116,8 @@ Works identically from `file://` and from a web server. Works offline. Works on 
 
 ## Contents
 
+- [Play it](#-play-it) — **[live demo](https://drsamonline.github.io/neon-runner/)**
+- [Screenshots](#-screenshots)
 - [Why it is interesting](#-why-it-is-interesting)
 - [Controls](#-controls)
 - [The duck rule](#-the-duck-rule)
