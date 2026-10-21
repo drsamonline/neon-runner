@@ -60,6 +60,12 @@ Works identically from `file://` and from a web server. Works offline. Works on 
 
 <img src="docs/screenshot-loadout.png" alt="Loadout screen with pilots and run modifiers" width="620">
 
+<br><br>
+
+**Controls** — every binding, live, rebindable
+
+<img src="docs/screenshot-controls.png" alt="Controls screen listing each action with its current keys" width="720">
+
 </div>
 
 
