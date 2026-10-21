@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 — Game Over | Neon Runner</title>
+<meta name="description" content="404 — this screen is off the map. Head back to Neon Runner and keep playing.">
+<meta name="robots" content="noindex,follow">
+<meta name="theme-color" content="#000000">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  :root{--mag:#ff2d95;--cyan:#00e5ff;--ink:#eaf6ff;--dim:#8ea3c4;--pixel:'Press Start 2P','Courier New',monospace;--mono:'Share Tech Mono',ui-monospace,Menlo,Consolas,'Courier New',monospace}
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{height:100%}
+  body{margin:0;background:#000;color:var(--ink);font-family:var(--mono);display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;overflow:hidden;position:relative}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;background:
+    radial-gradient(800px 500px at 20% 0%, rgba(255,45,149,.22), transparent 60%),
+    radial-gradient(800px 500px at 80% 100%, rgba(0,229,255,.20), transparent 60%),#000}
+  .crt{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:.55;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,.045) 0 1px, rgba(0,0,0,0) 1px 3px),
+    linear-gradient(rgba(18,16,16,0) 50%, rgba(0,0,0,.28) 50%);background-size:100% 3px,100% 4px}
+  @media (prefers-reduced-motion: reduce){.crt{animation:none}}
+  .box{border:2px solid var(--cyan);padding:48px 34px;max-width:660px;background:rgba(7,5,16,.85);
+    box-shadow:0 0 34px rgba(0,229,255,.28), inset 0 0 50px rgba(255,45,149,.08)}
+  .code{font-family:var(--pixel);font-size:clamp(46px,14vw,110px);margin:0;color:var(--mag);
+    text-shadow:0 0 12px rgba(255,45,149,.9),0 0 44px rgba(255,45,149,.6);animation:blink 1.2s steps(2,start) infinite}
+  @keyframes blink{to{opacity:.35}}
+  @media (prefers-reduced-motion: reduce){.code{animation:none}}
+  h1{font-family:var(--pixel);font-size:14px;margin:18px 0 14px;color:#fff;line-height:1.6}
+  p{color:var(--dim);margin:0 0 26px;font-size:16px}
+  .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+  a.btn{font-family:var(--pixel);font-size:11px;padding:15px 22px;border:2px solid var(--cyan);color:var(--cyan);
+    text-decoration:none;background:rgba(0,229,255,.06);box-shadow:0 0 16px rgba(0,229,255,.3)}
+  a.btn.primary{border-color:var(--mag);background:var(--mag);color:#12000a;box-shadow:0 0 22px rgba(255,45,149,.6)}
+  a.btn:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+<div class="crt" aria-hidden="true"></div>
+<main class="box">
+  <p class="code">404</p>
+  <h1>GAME OVER &mdash; SCREEN NOT FOUND</h1>
+  <p>This path ran off the edge of the level. Hit continue to get back in the run.</p>
+  <div class="row">
+    <a class="btn primary" href="/neon-runner/play/">&#9654; PLAY NOW</a>
+    <a class="btn" href="/neon-runner/">BACK TO HOME</a>
+  </div>
+</main>
+</body>
+</html>

@@ -2,6 +2,25 @@
 
 # NEON RUNNER
 
+**A retro auto-fire side-scrolling shooter — one self-contained HTML file. No install, works offline, MIT licensed.**
+
+[![Stars](https://img.shields.io/github/stars/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=ff2d95)](https://github.com/drsamonline/neon-runner/stargazers)
+[![Forks](https://img.shields.io/github/forks/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=00e5ff)](https://github.com/drsamonline/neon-runner/network/members)
+[![License](https://img.shields.io/github/license/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=ff2d95)](LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=00e5ff)](https://github.com/drsamonline/neon-runner/commits/main)
+
+### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY NOW</b></a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/neon-runner/">Landing page</a>
+
+<sub>**Landing page:** <https://drsamonline.github.io/neon-runner/> &nbsp;|&nbsp; **Play the game:** <https://drsamonline.github.io/neon-runner/play/></sub>
+
+</div>
+
+---
+
+<div align="center">
+
+# NEON RUNNER
+
 **A retro auto-fire side-scrolling shooter. You never press fire — your gun shoots anything in range.**
 
 Move, jump, duck. That is the entire control scheme.
