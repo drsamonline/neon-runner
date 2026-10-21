@@ -3,6 +3,45 @@
 All notable changes to this project. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/);
 versioning follows [Semantic Versioning](https://semver.org/).
 
+## [3.0.1] — 2026-10-21
+
+### Fixed
+
+- **No sound when playing with the keyboard.** The audio context was only
+  unlocked by a click or tap, never by a keypress — so a desktop player who
+  never touched the mouse got a silent game. Browsers require a user gesture
+  before audio may start, and a keypress is a valid gesture; the keydown
+  handler now unlocks audio like every other input path. Covered by a new
+  assertion that fails against the previous build.
+- **"Press any key" only accepted about ten keys.** The boot screen advanced on
+  any *bound* action, so pressing an unbound letter did nothing and the game
+  looked unresponsive on desktop. Any key at all now starts it.
+- **Keyboard did not work on some layouts or browsers.** Keys were read only
+  from `e.code`. There is now a fallback chain to `e.key` and `e.keyCode`, so
+  exotic layouts and older browsers register instead of silently ignoring you.
+- **Browser shortcuts were being swallowed.** `Ctrl`/`Cmd`/`Alt` combinations
+  are now passed straight through, so `Ctrl+R` and friends still work.
+- **The `back` icon did not exist.** Menu rows that used it rendered an empty
+  grey box. Added, along with the missing `cool` card icon.
+- **Boss codex icons used the wrong sprite signature** and only ever drew the
+  mech. All four bosses now render their own art in the codex.
+
+### Added
+
+- **A CONTROLS screen**, reachable from the title screen and the pause menu,
+  listing every action with its current keys and letting you rebind inline.
+- **Live key bindings on the boot screen**, read from your saved bindings, so
+  rebinding is reflected before you start.
+- **Explicit audio-state feedback.** The boot screen says when sound is waiting
+  for a gesture, and reports the audio state once it is running.
+- **A keyboard diagnostic.** If no key reaches the page within five seconds,
+  the boot screen says so and suggests clicking the page first, rather than
+  looking broken.
+- **The page grabs focus on load and on click**, so the first keypress lands on
+  the game instead of the browser chrome.
+- **Audio is now covered by the test suite.** The harnesses install a fake Web
+  Audio implementation, so the sound path is exercised instead of skipped.
+
 ## [3.0.0] — 2026-10-21
 
 The content and polish release. Everything below is offline; there is no
