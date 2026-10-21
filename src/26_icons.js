@@ -509,6 +509,30 @@ function drawIcon(g, kind, s){
     break;
 
   /* ---------- fallbacks: reuse the real sprites ---------- */
+  case 'back':
+    ibadge(g, s, IC.dim);
+    ip(g, m - 2, m - 12, 7, 7, IC.dim);
+    ip(g, m - 2, m + 5, 7, 7, IC.dim);
+    ip(g, m - 8, m - 6, 7, 7, IC.dim);
+    ip(g, m - 8, m - 1, 7, 7, IC.dim);
+    ip(g, m + 5, m - 6, 7, 7, IC.dim);
+    ip(g, m + 5, m - 1, 7, 7, IC.dim);
+    ip(g, m - 13, m - 3, 6, 6, IC.good);
+    break;
+  case 'cool':
+    ibadge(g, s, IC.dim);
+    /* a snowflake: three crossing spokes with ticks */
+    for (var cs = 0; cs < 3; cs++){
+      var ca = cs * Math.PI / 3;
+      var cx1 = m - Math.cos(ca) * 12, cy1 = m - Math.sin(ca) * 12;
+      var cx2 = m + Math.cos(ca) * 12, cy2 = m + Math.sin(ca) * 12;
+      for (var ct = 0; ct <= 12; ct++){
+        var tt = ct / 12;
+        ip(g, cx1 + (cx2 - cx1) * tt - 1.5, cy1 + (cy2 - cy1) * tt - 1.5, 3, 3, IC.cool);
+      }
+    }
+    icircle(g, m, m, 3, '#ffffff');
+    break;
   default: {
     if (typeof ENEMY_DEF !== 'undefined' && ENEMY_DEF[kind]){
       var spr = enemySprite(kind, 0, 0);
@@ -517,8 +541,9 @@ function drawIcon(g, kind, s){
       g.drawImage(spr, (s - dw) / 2, (s - dh) / 2, dw, dh);
       return;
     }
-    if (kind === 'boss' || kind === 'boss_mech'){
-      var bs = bossSprite(1, 0);
+    if (kind === 'boss' || kind.indexOf('boss_') === 0){
+      var bt = (kind === 'boss') ? 'mech' : kind.slice(5);
+      var bs = bossSprite(bt, 1, 0);
       var sc2 = Math.min((s - 6) / bs.width, (s - 6) / bs.height);
       g.drawImage(bs, (s - bs.width * sc2) / 2, (s - bs.height * sc2) / 2, bs.width * sc2, bs.height * sc2);
       return;
