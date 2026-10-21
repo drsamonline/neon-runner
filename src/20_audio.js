@@ -36,8 +36,24 @@ function audioUnlock(){
   var a = audioInit();
   if (!a) return;
   Audio.unlocked = true;
-  if (a.state === 'suspended'){ try { a.resume(); } catch(e){} }
+  /* Browsers start the context suspended until a real user gesture. resume()
+     is async and can reject if the gesture was not trusted, so swallow that
+     and try again on the next gesture rather than leaving the game silent. */
+  if (a.state !== 'running'){
+    try {
+      var p = a.resume();
+      if (p && typeof p.catch === 'function') p.catch(function(){});
+    } catch(e){}
+  }
   Music.start();
+}
+/* true while the browser is still holding the audio context hostage */
+function audioBlocked(){
+  return !!(Audio.ctx && Audio.ctx.state !== 'running');
+}
+function audioState(){
+  if (!Audio.ctx) return 'unavailable';
+  return Audio.ctx.state || 'unknown';
 }
 function audioApplyVolumes(){
   if (!Audio.ctx) return;
