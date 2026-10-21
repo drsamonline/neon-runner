@@ -8,12 +8,12 @@ Move, jump, duck. That is the entire control scheme.
 
 [![CI](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml/badge.svg)](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3ad4ff.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/version-3.0.0-ff5b8a.svg)](#-changelog)
+[![Version](https://img.shields.io/badge/version-3.0.1-ff5b8a.svg)](#-changelog)
 [![Dependencies](https://img.shields.io/badge/dependencies-0-5df0a8.svg)](#-zero-dependencies)
 [![Offline](https://img.shields.io/badge/network%20calls-none-5df0a8.svg)](#-zero-dependencies)
 [![Single file](https://img.shields.io/badge/build-single%20HTML%20file-ffd257.svg)](#-quick-start)
-[![Size](https://img.shields.io/badge/minified-173%20KB-9b5cff.svg)](#-quick-start)
-[![Gzipped](https://img.shields.io/badge/gzipped-59%20KB-9b5cff.svg)](#-quick-start)
+[![Size](https://img.shields.io/badge/minified-176%20KB-9b5cff.svg)](#-quick-start)
+[![Gzipped](https://img.shields.io/badge/gzipped-61%20KB-9b5cff.svg)](#-quick-start)
 [![Made with](https://img.shields.io/badge/made%20with-vanilla%20JS%20%2B%20canvas-ffd257.svg)](#-how-it-works)
 [![Tests](https://img.shields.io/badge/assertions-60%2B-5df0a8.svg)](#-testing)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#-contributing)
@@ -113,7 +113,11 @@ The gun is fully automatic and picks its own targets, so the only decisions left
 | Back / close menu | `Esc` or `⌫` | ↩ | — |
 | Mute | `M` | — | — |
 
-Every binding is remappable in **Settings → Rebind Controls**. Touch button size and opacity are adjustable, and there is a left-handed pad layout.
+Every binding is remappable from **CONTROLS** on the title screen (or the pause menu). The boot screen shows your current keys, so you can see what to press before you start.
+
+Touch button size and opacity are adjustable, and there is a left-handed pad layout.
+
+**Audio note.** Browsers refuse to start audio until the page has received a real user gesture — this is a hard browser rule, not a bug. The game unlocks its audio on the *first keypress or click*, and the boot screen says so explicitly while it is waiting. If you ever hear nothing, press any key or click once.
 
 ---
 
@@ -222,9 +226,9 @@ npm test             # build, then run the core harness and the full audit
 
 | Artefact | Size |
 | :-- | --: |
-| `build/neon-runner.html` (readable) | 291 KB |
-| `index.html` (minified) | **173 KB** |
-| `index.html` (gzipped) | **59 KB** |
+| `build/neon-runner.html` (readable) | 298 KB |
+| `index.html` (minified) | **176 KB** |
+| `index.html` (gzipped) | **61 KB** |
 
 ---
 
