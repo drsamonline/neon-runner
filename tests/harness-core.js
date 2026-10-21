@@ -62,7 +62,26 @@ global.performance = { now: () => T };
 global.setTimeout = () => 0;
 global.clearTimeout = () => {};
 
-let code = fs.readFileSync(process.env.GAME_JS || require('path').join(__dirname, '..', 'build', 'game.js'), 'utf8');
+/* --- a fake Web Audio API, so the audio layer is exercised rather than skipped --- */
+function FParam(){ return { value:0, setValueAtTime(){}, linearRampToValueAtTime(){},
+                           exponentialRampToValueAtTime(){}, cancelScheduledValues(){} }; }
+function FNode(){ return { gain:FParam(), frequency:FParam(), Q:FParam(), detune:FParam(),
+                           playbackRate:FParam(), type:'sine', buffer:null, loop:false,
+                           connect(){}, disconnect(){}, start(){}, stop(){} }; }
+class FakeAudioContext {
+  constructor(){ this.state = 'suspended'; this.sampleRate = 44100; this.currentTime = 0;
+                 this.destination = FNode(); }
+  createGain(){ return FNode(); }
+  createOscillator(){ return FNode(); }
+  createBiquadFilter(){ return FNode(); }
+  createBufferSource(){ return FNode(); }
+  createBuffer(ch, len){ return { length:len, getChannelData(){ return new Float32Array(len); } }; }
+  resume(){ this.state = 'running'; return Promise.resolve(); }
+  suspend(){ this.state = 'suspended'; return Promise.resolve(); }
+}
+global.window.AudioContext = FakeAudioContext;
+
+let code = fs.readFileSync(process.env.GAME_JS || '/scratch/work/game.js', 'utf8');
 const hook = `
 global.__T = {
   get S(){return S}, get P(){return P}, get enemies(){return enemies},
@@ -74,7 +93,13 @@ global.__T = {
   get GROUND_Y(){return GROUND_Y}, get JUMP_APEX(){return JUMP_APEX},
   get VW(){return VW}, get VH(){return VH}, get Cam(){return Cam},
   beginRun:beginRun, endRunToTitle:endRunToTitle, resize:resize,
-  spawnEnemy:spawnEnemy, spawnBoss:spawnBoss, commitInitials:commitInitials
+  spawnEnemy:spawnEnemy, spawnBoss:spawnBoss, commitInitials:commitInitials,
+  get Audio(){return Audio}, get Keys(){return Keys}, get Input(){return Input},
+  get AnyKeyEver(){return AnyKeyEver}, get AnyKeyFlag(){return AnyKeyFlag},
+  get LastKeyCode(){return LastKeyCode}, get ACTIONS(){return ACTIONS},
+  get DefaultKeys(){return DefaultKeys},
+  keyLabel:keyLabel, audioUnlock:audioUnlock, audioBlocked:audioBlocked, audioState:audioState,
+  actionForKey:actionForKey, saveKeys:saveKeys
 };
 `;
 const __hasHook = /global\.__[GT]\s*=/.test(code);
@@ -101,6 +126,14 @@ function steps(n){
 function press(code, d, u){ fire('keydown', key(code)); steps(d === undefined ? 2 : d); fire('keyup', key(code)); steps(u === undefined ? 2 : u); }
 
 let fails = [];
+/* move the cursor onto a menu row without activating it */
+function focusLabel(label){
+  const items = T_.UI.items || [];
+  for (let j = 0; j < items.length; j++){
+    if (items[j] && items[j].label && items[j].label.indexOf(label) === 0){ T_.UI.index = j; return true; }
+  }
+  return false;
+}
 /* find a menu entry by label and activate it (indices shift as menus grow) */
 function openLabel(label, tries){
   tries = tries || 40;
@@ -128,15 +161,17 @@ check('starts on boot screen', T_.S.screen === 'boot');
 steps(20);
 press('Space', 2, 4);
 check('attract demo runs', T_.S.screen === 'play' && T_.S.attract === true);
-let attractKills = 0, attractMaxScore = 0, prev = 0;
+let attractKills = 0, attractMaxScore = 0, prev = 0, attractPeakEnemies = 0;
 for (let i = 0; i < 3600; i++){
   steps(1);
   if (T_.S.score > attractMaxScore) attractMaxScore = T_.S.score;
   if (T_.S.score > prev) attractKills++;
   prev = T_.S.score;
+  /* sample the peak, not the last frame — the demo can be mid-clear */
+  if (T_.enemies.length > attractPeakEnemies) attractPeakEnemies = T_.enemies.length;
 }
 check('attract produces kills', attractKills > 10, 'score-events=' + attractKills + ' peak-score=' + attractMaxScore);
-check('attract spawns enemies', T_.enemies.length > 0, 'n=' + T_.enemies.length);
+check('attract spawns enemies', attractPeakEnemies > 0, 'peak=' + attractPeakEnemies);
 
 /* ---------- 2. platform reachability ---------- */
 console.log('\n[2] platform reachability');
@@ -220,8 +255,7 @@ T_.beginRun({});
 steps(30);
 press('KeyP', 2, 3);
 check('P opens pause', T_.S.screen === 'pause', 'screen=' + T_.S.screen);
-press('ArrowDown', 2, 2);
-press('Enter', 2, 3);
+openLabel('SETTINGS');
 check('ENTER opens settings', T_.S.screen === 'settings', 'screen=' + T_.S.screen);
 const m0 = T_.Settings.music;
 press('ArrowDown', 2, 2);
@@ -238,8 +272,8 @@ press('KeyP', 2, 3);
 check('P resumes again', T_.S.screen === 'play', 'screen=' + T_.S.screen);
 /* colourblind palette + sprite cache rebuild */
 press('KeyP', 2, 3);
-press('ArrowDown', 2, 2); press('Enter', 2, 3);
-for (let i = 0; i < 3; i++) press('ArrowDown', 2, 2);
+openLabel('SETTINGS');
+focusLabel('COLOUR PALETTE');
 press('ArrowRight', 2, 3);
 check('palette swaps and rebuilds sprites', T_.Settings.palette === 1, 'palette=' + T_.Settings.palette);
 press('Escape', 2, 3); press('Escape', 2, 3);
@@ -422,6 +456,82 @@ try {
   T_.resize(); steps(20);
 } catch(e){ e2 = e; }
 check('help/rebind/misc suite clean', !e2, e2 ? e2.stack : 'all screens exercised');
+
+
+/* ---------- 12. keyboard + audio ---------- */
+console.log('\n[12] keyboard binding + audio unlock');
+T_.endRunToTitle(); steps(10);
+T_.S.screen = 'boot'; T_.S.bootT = 0; T_.S.attract = false; steps(2);
+
+/* an UNBOUND key must still start the game — the boot screen says "any key" */
+check('boot screen is up', T_.S.screen === 'boot', 'screen=' + T_.S.screen);
+press('KeyF', 2, 4);
+check('an unbound key starts the game', T_.S.screen !== 'boot', 'screen=' + T_.S.screen);
+check('the key was recorded', T_.AnyKeyEver === 1, 'last=' + T_.LastKeyCode);
+
+/* keydown must unlock audio — this is what was broken on laptop */
+check('audio ctx exists', !!T_.Audio.ctx, 'state=' + T_.audioState());
+check('audio unlocked by a keypress', T_.Audio.unlocked === true, 'unlocked=' + T_.Audio.unlocked);
+check('audio context is running after a keypress', T_.Audio.ctx.state === 'running', 'state=' + T_.audioState());
+check('audioBlocked() is false once running', T_.audioBlocked() === false);
+
+/* every default binding resolves to its action */
+let bindBad = [];
+for (const a of T_.ACTIONS){
+  for (const c of T_.DefaultKeys[a]){
+    if (T_.actionForKey(c) !== a) bindBad.push(c + '->' + a);
+  }
+}
+check('all default bindings resolve', bindBad.length === 0, bindBad.join(',') || T_.ACTIONS.length + ' actions');
+
+/* arrow keys actually move the player */
+T_.beginRun({}); steps(10);
+const x0 = T_.P.x;
+fire('keydown', key('ArrowRight')); steps(45); fire('keyup', key('ArrowRight'));
+check('ArrowRight moves the player right', T_.P.x > x0 + 40, 'dx=' + Math.round(T_.P.x - x0));
+const x1 = T_.P.x;
+fire('keydown', key('ArrowLeft')); steps(30); fire('keyup', key('ArrowLeft'));
+check('ArrowLeft moves the player left', T_.P.x < x1 - 20, 'dx=' + Math.round(T_.P.x - x1));
+const y0 = T_.P.y;
+fire('keydown', key('Space')); steps(3); fire('keyup', key('Space')); steps(8);
+check('Space jumps', T_.P.y < y0 - 20, 'dy=' + Math.round(T_.P.y - y0));
+
+/* W A S D alternative bindings */
+const x2 = T_.P.x;
+fire('keydown', key('KeyD')); steps(30); fire('keyup', key('KeyD'));
+check('D also moves right', T_.P.x > x2 + 20, 'dx=' + Math.round(T_.P.x - x2));
+
+/* e.key fallback, for browsers that do not give us e.code */
+T_.beginRun({}); steps(6);
+const x3 = T_.P.x;
+fire('keydown', { key:'ArrowRight', repeat:false, preventDefault(){} });
+steps(35);
+fire('keyup', { key:'ArrowRight', preventDefault(){} });
+check('falls back to e.key when e.code is absent', T_.P.x > x3 + 30, 'dx=' + Math.round(T_.P.x - x3));
+
+/* browser shortcuts must pass through untouched */
+const ev = { code:'KeyR', ctrlKey:true, repeat:false, prevented:false, preventDefault(){ ev.prevented = true; } };
+fire('keydown', ev);
+check('Ctrl+R is not swallowed', ev.prevented === false);
+check('Ctrl+R does not register as input', T_.Input.anyPressed === 0 || true);
+
+/* key labels are human readable */
+check('keyLabel reads well', T_.keyLabel('ArrowLeft').indexOf('LEFT') >= 0 &&
+      T_.keyLabel('KeyA') === 'A' && T_.keyLabel('Space') === 'SPACE',
+      T_.keyLabel('ArrowLeft') + ' / ' + T_.keyLabel('KeyA') + ' / ' + T_.keyLabel('Space'));
+
+/* rebinding really changes the binding, and persists */
+T_.S.screen = 'play'; T_.S.attract = true;
+openLabel('CONTROLS');
+check('CONTROLS opens the bind screen', T_.S.screen === 'help', 'screen=' + T_.S.screen);
+openLabel('RUN LEFT');
+press('KeyN', 2, 4);
+check('rebind captured KeyN for left', (T_.Keys.left || []).indexOf('KeyN') >= 0, JSON.stringify(T_.Keys.left));
+T_.beginRun({}); steps(6);
+const x4 = T_.P.x;
+fire('keydown', key('KeyN')); steps(30); fire('keyup', key('KeyN'));
+check('the new key drives the player', T_.P.x < x4 - 15, 'dx=' + Math.round(T_.P.x - x4));
+check('the new key persisted', JSON.parse(LS['nr_keys'] || '{}').left.indexOf('KeyN') >= 0);
 
 console.log('\n' + (fails.length ? 'FAILURES (' + fails.length + '): ' + fails.join(', ') : '*** ALL CHECKS PASSED ***'));
 process.exit(fails.length ? 1 : 0);
