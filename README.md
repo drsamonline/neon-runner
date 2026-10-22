@@ -9,7 +9,7 @@
 [![License](https://img.shields.io/github/license/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=ff2d95)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=00e5ff)](https://github.com/drsamonline/neon-runner/commits/main)
 
-### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY NOW</b></a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/neon-runner/">Landing page</a>
+### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY NOW</b></a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/neon-runner/">Landing page</a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/">All projects</a>
 
 **Download:** [Windows (.exe)](https://github.com/drsamonline/neon-runner/releases/latest/download/neon-runner-portable.exe) &nbsp;·&nbsp; [Android (.apk)](https://github.com/drsamonline/neon-runner/releases/latest/download/neon-runner.apk)
 
