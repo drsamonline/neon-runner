@@ -11,6 +11,8 @@
 
 ### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY NOW</b></a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/neon-runner/">Landing page</a>
 
+**Download:** [Windows (.exe)](https://github.com/drsamonline/neon-runner/releases/latest/download/neon-runner-portable.exe) &nbsp;·&nbsp; [Android (.apk)](https://github.com/drsamonline/neon-runner/releases/latest/download/neon-runner.apk)
+
 
 </div>
 
