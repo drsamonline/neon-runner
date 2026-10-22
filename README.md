@@ -13,22 +13,15 @@
 
 **Download:** [Windows (.exe)](https://github.com/drsamonline/neon-runner/releases/latest/download/neon-runner-portable.exe) &nbsp;·&nbsp; [Android (.apk)](https://github.com/drsamonline/neon-runner/releases/latest/download/neon-runner.apk)
 
-
 </div>
 
 ---
 
 <div align="center">
 
-
-**A retro auto-fire side-scrolling shooter. You never press fire — your gun shoots anything in range.**
-
-Move, jump, duck. That is the entire control scheme.
-
 <br>
 
 ### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY IT NOW</b></a>
-
 
 [![Play now](https://img.shields.io/static/v1?label=NEON%20RUNNER&message=%E2%96%B6%20PLAY%20NOW&color=5df0a8&labelColor=0b1030&style=for-the-badge)](https://drsamonline.github.io/neon-runner/play/)
 [![Live demo](https://img.shields.io/website?url=https%3A%2F%2Fdrsamonline.github.io%2Fneon-runner%2Fplay%2F&label=live%20demo&up_message=online&down_message=offline&up_color=5df0a8&labelColor=0b1030&style=for-the-badge)](https://drsamonline.github.io/neon-runner/play/)
@@ -41,7 +34,6 @@ Move, jump, duck. That is the entire control scheme.
 [![Hosted on GitHub Pages](https://img.shields.io/badge/hosted%20on-GitHub%20Pages-222222?logo=githubpages&logoColor=white)](https://drsamonline.github.io/neon-runner/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-3ad4ff.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-3.0.1-ff5b8a.svg)](#-changelog)
-[![Last commit](https://img.shields.io/github/last-commit/drsamonline/neon-runner?color=9b5cff)](https://github.com/drsamonline/neon-runner/commits/main)
 
 [![Dependencies](https://img.shields.io/badge/dependencies-0-5df0a8.svg)](#-zero-dependencies)
 [![Offline](https://img.shields.io/badge/network%20calls-none-5df0a8.svg)](#-zero-dependencies)
@@ -127,7 +119,6 @@ Works identically from `file://` and from a web server. Works offline. Works on 
 <img src="docs/screenshot-controls.png" alt="Controls screen listing each action with its current keys" width="720">
 
 </div>
-
 
 ---
 
