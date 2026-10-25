@@ -2,6 +2,12 @@
 
 # NEON RUNNER
 
+<!-- shot:start -->
+
+![Screenshot](docs/shot.png)
+
+<!-- shot:end -->
+
 **A retro auto-fire side-scrolling shooter — one self-contained HTML file. No install, works offline, PolyForm Noncommercial licensed.**
 
 [![Stars](https://img.shields.io/github/stars/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=ff2d95)](https://github.com/drsamonline/neon-runner/stargazers)
