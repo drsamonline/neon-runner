@@ -2,7 +2,7 @@
 
 # NEON RUNNER
 
-**A retro auto-fire side-scrolling shooter — one self-contained HTML file. No install, works offline, MIT licensed.**
+**A retro auto-fire side-scrolling shooter — one self-contained HTML file. No install, works offline, PolyForm Noncommercial licensed.**
 
 [![Stars](https://img.shields.io/github/stars/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=ff2d95)](https://github.com/drsamonline/neon-runner/stargazers)
 [![Forks](https://img.shields.io/github/forks/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=00e5ff)](https://github.com/drsamonline/neon-runner/network/members)
@@ -32,7 +32,7 @@
 
 [![CI](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml/badge.svg)](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml)
 [![Hosted on GitHub Pages](https://img.shields.io/badge/hosted%20on-GitHub%20Pages-222222?logo=githubpages&logoColor=white)](https://drsamonline.github.io/neon-runner/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-3ad4ff.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-3ad4ff.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-3.0.1-ff5b8a.svg)](#-changelog)
 
 [![Dependencies](https://img.shields.io/badge/dependencies-0-5df0a8.svg)](#-zero-dependencies)
@@ -438,4 +438,4 @@ npm run dist      # regenerate index.html if you touched src/
 
 ## 📄 License
 
-[MIT](LICENSE) © 2026 Dr Sohil Momin
+[PolyForm Noncommercial](LICENSE) © 2026 Dr Sohil Momin
