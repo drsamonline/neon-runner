@@ -12,7 +12,7 @@
 
 [![Stars](https://img.shields.io/github/stars/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=ff2d95)](https://github.com/drsamonline/neon-runner/stargazers)
 [![Forks](https://img.shields.io/github/forks/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=00e5ff)](https://github.com/drsamonline/neon-runner/network/members)
-[![License](https://img.shields.io/github/license/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=ff2d95)](LICENSE)
+[![License](https://img.shields.io/badge/license-PolyForm%20Noncommercial%201.0.0-2e7d32?style=for-the-badge&labelColor=0b0014&color=ff2d95)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/drsamonline/neon-runner?style=for-the-badge&labelColor=0b0014&color=00e5ff)](https://github.com/drsamonline/neon-runner/commits/main)
 
 ### ▶&nbsp; <a href="https://drsamonline.github.io/neon-runner/play/"><b>PLAY NOW</b></a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/neon-runner/">Landing page</a> &nbsp;·&nbsp; <a href="https://drsamonline.github.io/">All projects</a>
@@ -38,7 +38,7 @@
 
 [![CI](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml/badge.svg)](https://github.com/drsamonline/neon-runner/actions/workflows/ci.yml)
 [![Hosted on GitHub Pages](https://img.shields.io/badge/hosted%20on-GitHub%20Pages-222222?logo=githubpages&logoColor=white)](https://drsamonline.github.io/neon-runner/)
-[![License: MIT](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-3ad4ff.svg)](LICENSE)
+[![License: PolyForm Noncommercial 1.0.0](https://img.shields.io/badge/License-PolyForm_Noncommercial_1.0.0-3ad4ff.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/version-3.0.1-ff5b8a.svg)](#-changelog)
 
 [![Dependencies](https://img.shields.io/badge/dependencies-0-5df0a8.svg)](#-zero-dependencies)
