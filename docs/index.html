@@ -609,18 +609,11 @@ npm test          <span class="cm"># runs the CI harnesses</span></pre>
   @media (prefers-reduced-motion:no-preference){.support-card{transition:border-color .15s ease}}
   .support-card:target,.support-card:focus-within{border-color:var(--s-accent)}
 
-  /* ---------- light theme ----------
-     Added so the page reads on paper. It overrides the page's own variables and
-     nothing else — no markup, no layout, no type. */
-  :root, html {
-    color-scheme: light;
-    --bg: #f7f6f2;
-    --panel: #ffffff;
-    --panel2: #fbfaf7;
-    --ink: #14161a;
-    --dim: #5c6470;
-    --line: #e2ddd2;
-  }
+  /* The light-theme override that used to sit here set --ink to #14161a and
+     color-scheme to light, but the hero, the scoreboard and the figures keep
+     their own dark backgrounds — so the text turned near-black on near-black.
+     A theme is a pair of colours; changing one half is what broke it. The page
+     is designed dark, and it stays dark. */
 </style>
 
 <section class="support" id="support" aria-labelledby="support-h" data-support>
